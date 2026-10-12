@@ -1,0 +1,174 @@
+{
+	"name": "vscode-lull",
+	"displayName": "Lull",
+	"description": "Lull noisy folders in VS Code: exclude them from the file watcher, automatically or by hand",
+	"version": "0.1.0",
+	"publisher": "hopleus",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/hopleus/vscode-lull.git"
+	},
+	"engines": {
+		"vscode": "^1.90.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"keywords": [
+		"file watcher",
+		"watcherExclude",
+		"performance",
+		"gitignore"
+	],
+	"main": "./out/extension.js",
+	"activationEvents": [
+		"onStartupFinished"
+	],
+	"capabilities": {
+		"untrustedWorkspaces": {
+			"supported": false,
+			"description": "Lull runs git and changes workspace settings."
+		},
+		"virtualWorkspaces": {
+			"supported": false,
+			"description": "Lull needs a local folder and the git executable."
+		}
+	},
+	"contributes": {
+		"commands": [
+			{
+				"command": "lull.exclude",
+				"title": "Lull Folder",
+				"category": "Lull"
+			},
+			{
+				"command": "lull.restore",
+				"title": "Unlull Folder",
+				"category": "Lull"
+			},
+			{
+				"command": "lull.scan",
+				"title": "Scan Ignored Folders",
+				"category": "Lull"
+			},
+			{
+				"command": "lull.restoreAll",
+				"title": "Unlull All Folders",
+				"category": "Lull"
+			}
+		],
+		"menus": {
+			"explorer/context": [
+				{
+					"command": "lull.exclude",
+					"when": "explorerResourceIsFolder && !(resourcePath in lull.excluded)",
+					"group": "7_modification@90"
+				},
+				{
+					"command": "lull.restore",
+					"when": "explorerResourceIsFolder && resourcePath in lull.excluded",
+					"group": "7_modification@90"
+				}
+			],
+			"commandPalette": [
+				{
+					"command": "lull.exclude",
+					"when": "false"
+				},
+				{
+					"command": "lull.restore",
+					"when": "false"
+				}
+			]
+		},
+		"colors": [
+			{
+				"id": "lull.lulledForeground",
+				"description": "Color of folders excluded from the file watcher",
+				"defaults": {
+					"dark": "#c8892e",
+					"light": "#a0620f",
+					"highContrast": "#e0a040",
+					"highContrastLight": "#7a4a08"
+				}
+			}
+		],
+		"configuration": {
+			"title": "Lull",
+			"properties": {
+				"lull.mode": {
+					"type": "string",
+					"enum": [
+						"off",
+						"suggest",
+						"auto"
+					],
+					"enumDescriptions": [
+						"Do not scan on startup",
+						"Scan on startup and offer to exclude heavy ignored folders",
+						"Scan on startup and exclude heavy ignored folders without asking"
+					],
+					"default": "suggest",
+					"description": "What to do with heavy gitignored folders when a workspace opens.",
+					"scope": "window"
+				},
+				"lull.threshold": {
+					"type": "number",
+					"minimum": 100,
+					"default": 5000,
+					"description": "Minimum number of files for an ignored folder to be considered heavy.",
+					"scope": "resource"
+				},
+				"lull.neverExclude": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"default": [
+						"node_modules",
+						"vendor",
+						"dist",
+						"build",
+						".git"
+					],
+					"description": "Folder names that the scan never excludes.",
+					"scope": "resource"
+				}
+			}
+		}
+	},
+	"scripts": {
+		"typecheck": "tsc -p tsconfig.json",
+		"build": "node esbuild.mjs",
+		"package": "node esbuild.mjs && node -e \"require('fs').mkdirSync('.build',{recursive:true})\" && vsce package --no-dependencies --out .build/",
+		"test": "npm run test:unit && npm run test:integration",
+		"test:unit": "node test/unit.mjs",
+		"test:integration": "node test/run.mjs",
+		"lint": "eslint src test",
+		"check": "npm run typecheck && npm run lint && npm run test:unit",
+		"vscode:prepublish": "node esbuild.mjs"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.39.5",
+		"@types/mocha": "^10.0.10",
+		"@types/node": "^22.0.0",
+		"@types/vscode": "^1.90.0",
+		"@vscode/test-electron": "^3.1.0",
+		"@vscode/vsce": "^3.0.0",
+		"esbuild": "^0.25.0",
+		"eslint": "^9.39.5",
+		"mocha": "^12.0.3",
+		"typescript": "~5.9.3",
+		"typescript-eslint": "^8.71.1"
+	},
+	"icon": "resources/icon.png",
+	"bugs": {
+		"url": "https://github.com/hopleus/vscode-lull/issues"
+	},
+	"homepage": "https://github.com/hopleus/vscode-lull#readme",
+	"galleryBanner": {
+		"color": "#1f2430",
+		"theme": "dark"
+	}
+}

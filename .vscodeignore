@@ -1,0 +1,17 @@
+src/**
+node_modules/**
+.build/**
+tsconfig.json
+esbuild.mjs
+**/*.map
+out-test/**
+.vscode-test/**
+test/**
+images/**
+eslint.config.mjs
+.gitignore
+.github/**
+CHANGELOG.md.bak
+.vscode/**
+CONTRIBUTING.md
+dist/**
